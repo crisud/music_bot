@@ -4,8 +4,12 @@ import asyncio
 
 import discord
 import yt_dlp as youtube_dl
-
 from discord.ext import commands
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+TOKEN = os.getenv("DISCORD_TOKEN")
 
 # Suppress noise about console usage from errors
 youtube_dl.utils.bug_reports_message = lambda: ""
@@ -144,9 +148,7 @@ async def on_ready():
 async def main():
     async with bot:
         await bot.add_cog(Music(bot))
-        await bot.start(
-            "MTIyNzA5Nzg1MzUwMzk5NjAxNA.Gnmmqb._187k667vItx2rLRad7SzmnC0ILw6Jwx-vzK_Y"
-        )
+        await bot.start(TOKEN)
 
 
 asyncio.run(main())
