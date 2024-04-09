@@ -97,16 +97,6 @@ class Music(commands.Cog):
         await ctx.send(f"Now playing: {player.title}")
 
     @commands.command()
-    async def volume(self, ctx, volume: int):
-        """Changes the player's volume"""
-
-        if ctx.voice_client is None:
-            return await ctx.send("Not connected to a voice channel.")
-
-        ctx.voice_client.source.volume = volume / 100
-        await ctx.send(f"Changed volume to {volume}%")
-
-    @commands.command()
     async def stop(self, ctx):
         """Stops and disconnects the bot from voice"""
 
