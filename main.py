@@ -5,11 +5,13 @@ import asyncio
 import discord
 import yt_dlp as youtube_dl
 from discord.ext import commands
+from discord.ui import Button, View
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
+
 
 # Suppress noise about console usage from errors
 youtube_dl.utils.bug_reports_message = lambda: ""
@@ -124,6 +126,31 @@ class Music(commands.Cog):
             ctx.voice_client.stop()
 
 
+# bottones section
+class Bottones(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.command()
+    async def menu(
+        self,
+        ctx,
+    ):
+        btn_pausa_gente = Button(
+            label="PAUSA GENTE", style=discord.ButtonStyle.green, emoji="🍟"
+        )
+        view = View()
+        view.add_item(btn_pausa_gente)
+
+        btn_ponga_esa_vara = Button(
+            label="PONGA ESA VARA", style=discord.ButtonStyle.grey, emoji="🍟"
+        )
+
+        view.add_item(btn_ponga_esa_vara)
+
+        await ctx.send(f"menu", view=view)
+
+
 intents = discord.Intents.default()
 intents.message_content = True
 
@@ -148,6 +175,7 @@ async def on_ready():
 async def main():
     async with bot:
         await bot.add_cog(Music(bot))
+        await bot.add_cog(Bottones(bot))
         await bot.start(TOKEN)
 
 
