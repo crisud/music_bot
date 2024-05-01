@@ -6,10 +6,12 @@ import discord
 import yt_dlp as youtube_dl
 from discord.ext import commands
 from dotenv import load_dotenv
+from collections import deque
 import os
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
+
 
 # Suppress noise about console usage from errors
 youtube_dl.utils.bug_reports_message = lambda: ""
@@ -35,6 +37,7 @@ ffmpeg_options = {
 }
 
 ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
+
 
 
 class YTDLSource(discord.PCMVolumeTransformer):
@@ -83,19 +86,35 @@ class Music(commands.Cog):
 
         await channel.connect()
 
-    @commands.command()
-    async def play(self, ctx, *, url):
-        """Streams from a url"""
-        print("------")
-        print("Command play called")
-        print(f"Playing: {url} in {ctx.author.voice.channel}")
+#cola
+queue = deque()
+playing = False  # Variable para controlar si ya se está reproduciendo una canción
+
+@commands.command()
+async def play(self, ctx, *, url):
+    """Streams from a url"""
+    global reproduciendo  # valida si se esta reproduciendo algo
+    print("------")
+    print("Command play called")
+    print(f"Playing: {url} in {ctx.author.voice.channel}")
+    queue.append(url)
+    if not playing:  # Si no se está reproduciendo ninguna canción, inicia la reproducción
+        await self.play_next(ctx)
+
+async def play_next(self, ctx):
+    global playing
+    playing = True
+    while queue:
         async with ctx.typing():
-            player = await YTDLSource.from_url(url, loop=self.bot.loop, stream=True)
+            player = await YTDLSource.from_url(queue.popleft(), loop=self.bot.loop, stream=True)
             ctx.voice_client.play(
                 player, after=lambda e: print(f"Player error: {e}") if e else None
             )
 
         await ctx.send(f"Now playing: {player.title}")
+    playing = False
+
+    
 
     @commands.command()
     async def stop(self, ctx):
