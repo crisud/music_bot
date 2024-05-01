@@ -93,14 +93,14 @@ playing = False  # Variable para controlar si ya se está reproduciendo una canc
 @commands.command()
 async def play(self, ctx, *, url):
     """Streams from a url"""
-    global reproduciendo  # valida si se esta reproduciendo algo
+    global playing  # valida si se esta reproduciendo algo
     print("------")
     print("Command play called")
     print(f"Playing: {url} in {ctx.author.voice.channel}")
     queue.append(url)
     if not playing:  # Si no se está reproduciendo ninguna canción, inicia la reproducción
         await self.play_next(ctx)
-
+    
 async def play_next(self, ctx):
     global playing
     playing = True
